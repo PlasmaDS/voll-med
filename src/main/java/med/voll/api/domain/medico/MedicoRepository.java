@@ -12,10 +12,13 @@ public interface MedicoRepository extends JpaRepository<Medico, Long> {
     Page<Medico> findByActivoTrue(Pageable paginacion);
 
     @Query("""
-            SELECT m FROM Medico m WHERE m.activo = 1 AND m.especialidad=:especialidad AND m.id NOT IN (
-                SELECT c.medico.id FROM Consulta c c.data=:fecha
+            SELECT m FROM Medico m WHERE m.activo = true AND m.especialidad = :especialidad AND m.id NOT IN (
+                SELECT c.medico.id FROM Consulta c WHERE c.fecha = :fecha
             ) ORDER BY rand() LIMIT 1
             """)
     Medico seleccionarMedicoConEspecialdadEnFecha(Especialidad especialidad, LocalDateTime fecha);
+
+    @Query("SELECT m.activo FROM Medico m WHERE m.id = :idMedico")
+    Boolean findActivoById(Long idMedico);
 
 }

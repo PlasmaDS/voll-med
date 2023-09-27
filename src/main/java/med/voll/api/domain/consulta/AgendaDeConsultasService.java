@@ -1,8 +1,11 @@
 package med.voll.api.domain.consulta;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import med.voll.api.domain.consulta.validaciones.ValidadorDeConsultas;
 import med.voll.api.domain.medico.Medico;
 import med.voll.api.domain.medico.MedicoRepository;
 import med.voll.api.domain.paciente.PacienteRepository;
@@ -20,22 +23,35 @@ public class AgendaDeConsultasService {
     @Autowired
     private ConsultaRepository consultaRepository;
 
-    public void agendar(DatosAgendarConsulta datos) {
+    @Autowired
+    List<ValidadorDeConsultas> validadores;
 
-        if (pacienteRepository.findById(datos.idPaciente()).isPresent()) {
+    public DatosDetalladoConsulta agendar(DatosAgendarConsulta datos) {
+
+        if (!pacienteRepository.findById(datos.idPaciente()).isPresent()) {
             throw new ValidacionDeIntegridad("Id de paciente no encontrado");
         }
 
-        if (datos.idMedico() != null && medicoRepository.existsById(datos.idMedico())) {
+        if (datos.idMedico() != null && !medicoRepository.existsById(datos.idMedico())) {
             throw new ValidacionDeIntegridad("Id de medico no encontrado");
         }
 
+        // Validaciones de la lista
+        validadores.forEach(v -> v.validar(datos));
+
         var paciente = pacienteRepository.findById(datos.idPaciente()).get();
+
         var medico = seleccionarMedico(datos);
+
+        if (medico == null) {
+            throw new ValidacionDeIntegridad("No existen médicos disponibles para esta especialidad en este horario");
+        }
 
         var consulta = new Consulta(null, medico, paciente, datos.fecha());
 
         consultaRepository.save(consulta);
+
+        return new DatosDetalladoConsulta(consulta);
     }
 
     private Medico seleccionarMedico(DatosAgendarConsulta datos) {

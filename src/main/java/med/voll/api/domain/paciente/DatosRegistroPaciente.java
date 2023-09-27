@@ -8,9 +8,9 @@ import jakarta.validation.constraints.Pattern;
 import med.voll.api.domain.direccion.DatosDireccion;
 
 public record DatosRegistroPaciente(
-        @NotBlank String nombre,
-        @NotBlank @Email String email,
-        @NotBlank String telefono,
-        @NotBlank @Pattern(regexp = "\\d{3}\\.?\\d{3}\\.?\\d{3}\\-?\\d{2}") String documentoIdentidad,
-        @NotNull @Valid DatosDireccion direccion) {
+                @NotBlank String nombre,
+                @NotBlank @Email String email,
+                @NotBlank String telefono,
+                @NotBlank @Pattern(regexp = "\\d{3}\\.?\\d{3}\\.?\\d{3}\\-?\\d{2}") String dni,
+                @NotNull @Valid DatosDireccion direccion) {
 }

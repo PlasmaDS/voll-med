@@ -25,7 +25,7 @@ public class Paciente {
     private Long id;
     private String nombre;
     private String email;
-    private String documentoIdentidad;
+    private String dni;
     private String telefono;
     private Boolean activo;
     @Embedded
@@ -35,7 +35,7 @@ public class Paciente {
         this.nombre = datos.nombre();
         this.email = datos.email();
         this.telefono = datos.telefono();
-        this.documentoIdentidad = datos.documentoIdentidad();
+        this.dni = datos.dni();
         this.activo = true;
         this.direccion = new Direccion(datos.direccion());
     }

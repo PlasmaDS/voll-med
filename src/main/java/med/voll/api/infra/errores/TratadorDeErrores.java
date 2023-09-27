@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ValidationException;
 
 @RestControllerAdvice // Actua como una especie de Proxy para interceptar la llamada si sucede algun
                       // tipo de excepción (Programación Orientada a Aspectos)
@@ -23,6 +24,16 @@ public class TratadorDeErrores {
     public ResponseEntity<List<DatosErrorValidacion>> tratarError400(MethodArgumentNotValidException e) {
         var errores = e.getFieldErrors().stream().map(DatosErrorValidacion::new).toList();
         return ResponseEntity.badRequest().body(errores);
+    }
+
+    @ExceptionHandler(ValidacionDeIntegridad.class)
+    public ResponseEntity<String> errorHandlerValidacionesDeIntegridad(Exception e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<String> errorHandlerValidacionesDeNegocio(Exception e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
     // Como el DTO va a ser utilisado uncamente aquí se crea en la misma clase
