@@ -32,7 +32,7 @@ Para ejecutar la API VollMed en tu entorno local, sigue estos pasos:
 git clone https://github.com/PlasmaDS/voll-med.git
 ```
 
-2. Configura la base de datos y las propiedades de la aplicación en `application.properties`.
+2. Configura la base de datos y las propiedades de la aplicación en `application.yml`.
 
 3. Ejecuta la aplicación.
 
