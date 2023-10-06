@@ -1,0 +1,21 @@
+spring:
+  profile.active: prod
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+
+jpa:
+  show-sql: false
+  properties:
+    hibernate:
+      format_sql: false
+
+server:
+  error:
+    include-stacktrace: never
+
+api:
+  security:
+    secret: ${JWT_SECRET:asd123} #valor por defecto 123456
