@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import med.voll.api.domain.usuarios.DatosAutenticacionUsuario;
 import med.voll.api.domain.usuarios.Usuario;
@@ -26,6 +28,8 @@ public class AutenticacionController {
     @Autowired
     private TokenService tokenService;
 
+    @Tag(name = "Autenticación", description = "Obtención de token que permite la utilización del resto de la API.")
+    @Operation(summary = "Iniciar sesión")
     @PostMapping
     public ResponseEntity<DatosJWTToken> autenticarUsuario(
             @RequestBody @Valid DatosAutenticacionUsuario datosAutenticacionUsuario) {

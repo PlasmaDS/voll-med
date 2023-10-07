@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import med.voll.api.domain.direccion.DatosDireccion;
@@ -29,11 +33,15 @@ import med.voll.api.domain.medico.MedicoRepository;
 
 @RestController
 @RequestMapping("/medicos")
+@SecurityRequirement(name = "bearer-key")
+@Tag(name = "Medicos", description = "Operaciones relacionadas con médicos.")
 public class MedicoController {
 
     @Autowired // forma para fines didácticos pero no recomendada en la práctica
     private MedicoRepository medicoRepository;
 
+    @Operation(summary = "Registrar un nuevo medico")
+    @ApiResponse(responseCode = "201", description = "Médico creado con éxito")
     @PostMapping
     public ResponseEntity<DatosRespuestaMedico> RegistrarMedico( // ResponseEntity es un Wrapper, que sirve para
                                                                  // encapsular la respuesta que se le da al servidor.
@@ -53,6 +61,7 @@ public class MedicoController {
         return ResponseEntity.created(url).body(datosRespuestaMedico);
     }
 
+    @Operation(summary = "Obtener el listado de médicos")
     @GetMapping
     public ResponseEntity<Page<DatosListadoMedico>> listadoMedicos(@PageableDefault(size = 2) Pageable paginacion) {
         // return medicoRepository.findAll(paginacion).map(DatosListadoMedico::new);
@@ -60,6 +69,7 @@ public class MedicoController {
         return ResponseEntity.ok(medicoRepository.findByActivoTrue(paginacion).map(DatosListadoMedico::new));
     }
 
+    @Operation(summary = "Actualizar la información de un médico")
     @PutMapping
     @Transactional
     public ResponseEntity<DatosRespuestaMedico> actualizarMedico(
@@ -82,6 +92,8 @@ public class MedicoController {
     // }
 
     // Delete lógico
+    @Operation(summary = "Deshabilitar un médico")
+    @ApiResponse(responseCode = "204", description = "Médico deshabilitado")
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<String> eliminarMedico(@PathVariable Long id) {
@@ -90,6 +102,7 @@ public class MedicoController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Obtener los datos de un médico")
     @GetMapping("/{id}")
     public ResponseEntity<DatosRespuestaMedico> retornaDatosMedico(@PathVariable Long id) {
         Medico medico = medicoRepository.getReferenceById(id);

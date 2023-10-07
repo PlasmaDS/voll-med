@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import med.voll.api.domain.paciente.DatosActualizarPaciente;
@@ -26,11 +30,15 @@ import med.voll.api.domain.paciente.PacienteRepository;
 
 @RestController
 @RequestMapping("pacientes")
+@SecurityRequirement(name = "bearer-key")
+@Tag(name = "Pacientes", description = "Operaciones relacionadas con pacientes.")
 public class PacienteController {
 
     @Autowired
     private PacienteRepository repository;
 
+    @Operation(summary = "Registrar un nuevo paciente")
+    @ApiResponse(responseCode = "201", description = "Paciente creado con éxito")
     @PostMapping
     @Transactional
     public ResponseEntity<DatosDetalladoPaciente> registrar(@RequestBody @Valid DatosRegistroPaciente datos,
@@ -42,6 +50,7 @@ public class PacienteController {
         return ResponseEntity.created(uri).body(new DatosDetalladoPaciente(paciente));
     }
 
+    @Operation(summary = "Obtener el listado de pacientes")
     @GetMapping
     public ResponseEntity<Page<DatosListaPaciente>> listar(
             @PageableDefault(page = 0, size = 10, sort = { "nombre" }) Pageable paginacion) {
@@ -50,6 +59,7 @@ public class PacienteController {
         return ResponseEntity.ok(page);
     }
 
+    @Operation(summary = "Actualizar la información de un paciente")
     @PutMapping
     @Transactional
     public ResponseEntity<DatosDetalladoPaciente> atualizar(@RequestBody @Valid DatosActualizarPaciente datos) {
@@ -58,6 +68,8 @@ public class PacienteController {
         return ResponseEntity.ok(new DatosDetalladoPaciente(paciente));
     }
 
+    @Operation(summary = "Deshabilitar un paciente")
+    @ApiResponse(responseCode = "204", description = "Paciente deshabilitado")
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<String> remover(@PathVariable Long id) {
@@ -66,6 +78,7 @@ public class PacienteController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Obtener los datos de un paciente")
     @GetMapping("/{id}")
     public ResponseEntity<DatosDetalladoPaciente> detallar(@PathVariable Long id) {
         var paciente = repository.getReferenceById(id);
