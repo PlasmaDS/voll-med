@@ -43,3 +43,7 @@ git clone https://github.com/PlasmaDS/voll-med.git
 ## Uso
 
 Una vez que la API está en funcionamiento, puedes comenzar a utilizarla a través de las rutas y endpoints proporcionados. Consulta la documentación de la API para obtener detalles sobre cómo interactuar con ella.
+
+## Documentación de la API
+
+http://server:port/swagger-ui/index.html
