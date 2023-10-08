@@ -2,7 +2,11 @@ package med.voll.api.domain.consulta;
 
 import java.time.LocalDateTime;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,5 +42,20 @@ public class Consulta {
     private Paciente paciente;
 
     private LocalDateTime fecha;
+
+    @Column(name = "motivo_cacelacion")
+    @Enumerated(EnumType.STRING)
+    @Schema(description = "Motivo de cancelación de la consulta", example = "PACIENTE_DESISTIO")
+    private MotivoCancelacion motivoCancelacion;
+
+    public Consulta(Medico medico, Paciente paciente, LocalDateTime fecha) {
+        this.medico = medico;
+        this.paciente = paciente;
+        this.fecha = fecha;
+    }
+
+    public void cancelar(MotivoCancelacion motivo) {
+        this.motivoCancelacion = motivo;
+    }
 
 }

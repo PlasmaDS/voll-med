@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
@@ -35,9 +36,8 @@ public class ConsultaController {
     @Autowired
     private ConsultaRepository consultaRepository;
 
-    private MotivoCancelacion motivo;
-
     @Operation(summary = "Registrar una nueva consulta")
+    @ApiResponse(responseCode = "201", description = "Consulta registrada con éxito")
     @PostMapping
     @Transactional
     public ResponseEntity<DatosDetalladoConsulta> agendar(@RequestBody @Valid DatosAgendarConsulta datos) {
@@ -49,11 +49,13 @@ public class ConsultaController {
     }
 
     @Operation(summary = "Cancelar una consulta")
+    @ApiResponse(responseCode = "204", description = "Consulta cancelada")
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<String> eliminarConsulta(@PathVariable Long id) {
+    public ResponseEntity<String> eliminarConsulta(@PathVariable Long id, @RequestBody String motivo) {
         Consulta consulta = consultaRepository.getReferenceById(id);
-        consulta.cancelar(motivo);
+        MotivoCancelacion motivoDelete = MotivoCancelacion.valueOf(motivo);
+        consulta.cancelar(motivoDelete);
         return ResponseEntity.noContent().build();
     }
 
