@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,19 +41,21 @@ public class ConsultaController {
     @ApiResponse(responseCode = "201", description = "Consulta registrada con éxito")
     @PostMapping
     @Transactional
-    public ResponseEntity<DatosDetalladoConsulta> agendar(@RequestBody @Valid DatosAgendarConsulta datos) {
+    public ResponseEntity<String> agendar(
+            @RequestBody @Valid @Schema(example = "{\"idPaciente\": 0, \"idMedico\": 0, \"fecha\": \"dd/MM/yyyy HH:mm\"}") DatosAgendarConsulta datos) {
         System.out.println(datos);
 
-        var response = service.agendar(datos);
+        service.agendar(datos);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok("Consulta registrada con éxito");
     }
 
     @Operation(summary = "Cancelar una consulta")
     @ApiResponse(responseCode = "204", description = "Consulta cancelada")
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<String> eliminarConsulta(@PathVariable Long id, @RequestBody String motivo) {
+    public ResponseEntity<String> eliminarConsulta(@PathVariable Long id,
+            @RequestBody @Schema(example = "Opciones: PACIENTE_DESISTIO, MEDICO_CANCELO, OTROS") String motivo) {
         Consulta consulta = consultaRepository.getReferenceById(id);
         MotivoCancelacion motivoDelete = MotivoCancelacion.valueOf(motivo);
         consulta.cancelar(motivoDelete);
